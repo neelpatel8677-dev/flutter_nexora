@@ -20,6 +20,14 @@ exports.register = async (req, res) => {
       department,
       subjects,
     } = req.body;
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+
+    if (!name || !normalizedEmail || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, password, and role are required',
+      });
+    }
 
     // Only allow student or faculty registration
     if (!['student', 'faculty'].includes(role)) {
@@ -30,7 +38,7 @@ exports.register = async (req, res) => {
     }
 
     // Check if user exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -41,7 +49,7 @@ exports.register = async (req, res) => {
     // Create user
     const userData = {
       name,
-      email,
+      email: normalizedEmail,
       password,
       role,
       phone,
@@ -87,6 +95,19 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    if (error.message === 'JWT_SECRET is not configured on the server') {
+      return res.status(503).json({
+        success: false,
+        message: 'Authentication is not configured on the server. Set JWT_SECRET in Render environment variables.',
+      });
+    }
+    if (error.code === 11000) {
+      const duplicateField = Object.keys(error.keyPattern || {})[0] || 'field';
+      return res.status(409).json({
+        success: false,
+        message: `A user with this ${duplicateField} already exists`,
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Server error',
@@ -100,15 +121,16 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return res.status(400).json({
         success: false,
         message: 'Please provide email and password',
       });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
@@ -142,6 +164,12 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    if (error.message === 'JWT_SECRET is not configured on the server') {
+      return res.status(503).json({
+        success: false,
+        message: 'Authentication is not configured on the server. Set JWT_SECRET in Render environment variables.',
+      });
+    }
     res.status(500).json({
       success: false,
       message: 'Server error',

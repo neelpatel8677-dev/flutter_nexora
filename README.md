@@ -1,8 +1,23 @@
-# Nexora Backend
+# Nexora
 
-Student Management System API - Node.js + Express + MongoDB
+Student Management System with a Flutter mobile application and Node.js backend.
 
-## Features
+## Mobile App
+
+The Flutter application is in [`Nexora/mobile`](Nexora/mobile).
+
+```bash
+cd Nexora/mobile
+flutter pub get
+flutter run
+```
+
+## Backend
+
+The Node.js + Express + MongoDB API is in [`Nexora/backend`](Nexora/backend).
+
+### Features
+
 - JWT Authentication
 - Role-based access (Student / Faculty / Admin)
 - Attendance (single + bulk + lecture-wise)
@@ -13,86 +28,64 @@ Student Management System API - Node.js + Express + MongoDB
 - Activities / Progress
 - AI Q&A endpoint (demo + ready for real AI)
 
-## Setup
+### Setup
 
-1. Install dependencies
-```bash
-cd backend
-npm install
-```
+1. Install dependencies:
 
-2. Create `.env` file
-```bash
-cp .env.example .env
-```
-Edit the values (especially `MONGODB_URI` and `JWT_SECRET`).
+   ```bash
+   cd Nexora/backend
+   npm install
+   ```
 
-3. Make sure MongoDB is running locally (or use MongoDB Atlas URI).
+2. Create `.env` from the template:
 
-4. Seed Admin account
-```bash
-npm run seed
-```
-Default Admin:
-- Email: `admin@nexora.com`
-- Password: `Admin@123`
+   ```bash
+   cp .env.example .env
+   ```
 
-5. Start server
-```bash
-npm run dev
-```
-Server runs on `http://localhost:5000`
+   Edit the values, especially `MONGODB_URI` and `JWT_SECRET`.
 
-## API Endpoints
+3. Make sure MongoDB is running locally or use a MongoDB Atlas URI.
 
-### Auth
+4. Seed the admin account:
+
+   ```bash
+   npm run seed
+   ```
+
+   Default admin:
+   - Email: `admin@nexora.com`
+   - Password: `Admin@123`
+
+5. Start the server:
+
+   ```bash
+   npm run dev
+   ```
+
+   The server runs at `http://localhost:5000`.
+
+### API Endpoints
+
 - `POST /api/auth/register` - Register (student/faculty only)
 - `POST /api/auth/login` - Login
 - `GET /api/auth/me` - Current user
-
-### Users (Admin)
 - `GET /api/users` - All users
 - `GET /api/users/students` - Get students
-- `PUT /api/users/:id` - Update
-- `DELETE /api/users/:id` - Deactivate
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Deactivate user
+- `GET|POST /api/attendance` - Attendance
+- `GET /api/attendance/lecture-wise` - Lecture-wise attendance
+- `POST /api/attendance/bulk` - Bulk attendance
+- `GET|POST|PUT /api/fees` - Fees
+- `GET|POST|PUT /api/results` - Results
+- `GET|POST|PUT|DELETE /api/notes` - Notes
+- `GET|POST|PUT /api/timetable` - Timetable
+- `GET|POST|PUT /api/activities` - Activities
+- `POST /api/ai/ask` - Ask AI (student only)
 
-### Attendance
-- `GET /api/attendance` - List
-- `GET /api/attendance/lecture-wise` - Lecture wise
-- `POST /api/attendance` - Mark
-- `POST /api/attendance/bulk` - Bulk mark
+All protected routes require:
 
-### Fees
-- `GET /api/fees`
-- `POST /api/fees`
-- `PUT /api/fees/:id`
-
-### Results
-- `GET /api/results`
-- `POST /api/results`
-- `PUT /api/results/:id`
-
-### Notes
-- `GET /api/notes`
-- `POST /api/notes`
-- `PUT /api/notes/:id`
-- `DELETE /api/notes/:id`
-
-### Timetable
-- `GET /api/timetable`
-- `POST /api/timetable`
-- `PUT /api/timetable/:id`
-
-### Activities
-- `GET /api/activities`
-- `POST /api/activities`
-- `PUT /api/activities/:id`
-
-### AI
-- `POST /api/ai/ask` - Ask AI (Student only)
-
-## Headers
-All protected routes need:
-```
+```text
 Authorization: Bearer <token>
 ```

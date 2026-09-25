@@ -4,9 +4,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 
-// Connect to database
-connectDB();
-
 const app = express();
 
 // Middleware
@@ -52,3 +49,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Nexora Server running on port ${PORT}`);
 });
+
+// Keep the HTTP service available for health checks while the database connects.
+connectDB();

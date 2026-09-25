@@ -65,6 +65,18 @@ The Node.js + Express + MongoDB API is in [`Nexora/backend`](Nexora/backend).
 
    The server runs at `http://localhost:5000`.
 
+### Render deployment
+
+The repository includes [`render.yaml`](render.yaml), which configures Render to use
+`Nexora/backend` as the service root and `/api/health` as the health check.
+Configure these required environment variables in Render:
+
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `ADMIN_PASSWORD`
+
+Render provides the `PORT` environment variable automatically.
+
 ### API Endpoints
 
 - `POST /api/auth/register` - Register (student/faculty only)
